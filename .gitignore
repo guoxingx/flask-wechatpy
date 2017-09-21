@@ -1,0 +1,6 @@
+*.pyc
+wechat_config.py
+virt-wechatpydemo
+.python-version
+.bak-*
+.lean*
