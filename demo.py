@@ -2,15 +2,11 @@
 # encoding: utf-8
 
 
-from flask import request
+from flask import Flask, request
 from flask_wechatpy.component import Component
 
-from app import app
-
-try:
-    app.config.from_object('wechat_config')
-except ImportError:
-    app.config.from_object('example_config')
+app = Flask(__name__)
+app.config.from_object('wechat_config')
 
 # wechat
 wechat = Component(app=app)
