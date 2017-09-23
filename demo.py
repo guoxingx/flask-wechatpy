@@ -1,11 +1,10 @@
-#!/usr/bin/env python
-# encoding: utf-8
+# coding: utf-8
 
-
-from flask import Flask, request
+from flask import request, url_for
 from flask_wechatpy.component import Component
 
-app = Flask(__name__)
+from app import app
+
 app.config.from_object('wechat_config')
 
 # wechat
@@ -43,8 +42,31 @@ def compcallback():
 @app.route('/mp/<appid>/notify', methods=['GET', 'POST'])
 @wechat.component_mp_notify()
 def mpcallback(appid):
-    message = request.wechat_msg.get('component_mp_notify')
-    return 'I got your "{}". --powered by wechatpydemo.'.format(message)
+    """
+    receive authorized mp notify.
+
+    return with wechat.news()/text()/image()/...
+    """
+    content = request.wechat_msg.get('component_mp_content')
+    client = request.wechat_msg.get('component_client')
+
+    if content.lower() == 'index':
+        return wechat.news(
+            title='Index Of Application.',
+            description='click to visit our site.',
+            image='http://ac-n8vegisj.clouddn.com/b09f095e305b85683878.JPG',
+            url=request.url_root[:-1] + url_for('mpindex', appid=client.appid)
+        )
+
+    return wechat.text('I got your "{}". --powered by flask-wechat.'.format(content))
+
+
+@app.route('/mp/<appid>/index')
+@wechat.component_user_login(redirect_endpoint='mpindex')
+def mpindex(appid):
+    return '''
+    <h4>Hi, openid:{}</h4>
+    '''.format(request.wechat_msg.get('openid'))
 
 
 if __name__ == '__main__':
