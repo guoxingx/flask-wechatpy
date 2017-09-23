@@ -16,9 +16,31 @@ from base import WeChatBase
 
 class Component(WeChatBase):
 
-    BaseComponentAuthCallUrl = 'https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid={}&pre_auth_code={}&redirect_uri={}'
+    def authcall_url(self, pre_auth_code, redirect_uri):
+        """
+        url for component authorization.
+
+        param: pre_auth_code: string: pre_auth_code for component.
+        param: redirect_url : string: auth result redirect url.
+
+        return: url for auth
+        """
+        urls = [
+            'https://mp.weixin.qq.com/cgi-bin/',
+            'componentloginpage?',
+            'component_appid=',
+            self.component_appid,
+            '&pre_auth_code=',
+            pre_auth_code,
+            '&redirect_uri=',
+            redirect_uri
+        ]
+        return ''.join(urls)
 
     def component_notify(self):
+        """
+        receive component ticket and unauthorized message.
+        """
         def decorator(func):
             @functools.wraps(func)
             def wrapper(*args, **kw):
@@ -51,6 +73,15 @@ class Component(WeChatBase):
         return decorator
 
     def component_authcall(self, callback_endpoint, **callback_params):
+        """
+        decorator for component authorization router.
+        create pre_auth_code to start request and response to callback url.
+
+        request.wechat_msg.get("component_auth_url") for authorization url.
+
+        param: callback_endpoint: string: endpoint of callback url.
+        param: **callback_params: params for callback endpoint.
+        """
 
         def decorator(func):
             @functools.wraps(func)
@@ -58,7 +89,7 @@ class Component(WeChatBase):
                 preauthcode = self.create_preauthcode().get('pre_auth_code')
                 redirect_url = url_for(callback_endpoint, **callback_params)
                 redirect_url = urllib.quote_plus(request.url_root[:-1] + redirect_url)
-                url = self.BaseComponentAuthCallUrl.format(self.component_appid, preauthcode, redirect_url)
+                url = self.authcall_url(preauthcode, redirect_url)
                 request.wechat_msg = {'component_authcall_url': url}
                 return func(*args, **kw)
 
@@ -66,7 +97,11 @@ class Component(WeChatBase):
         return decorator
 
     def component_authcallback(self):
+        """
+        decorator for component authorization callback router.
 
+        request.wechat_smg.get("component_client") for WeChatComponentClient object.
+        """
         def decorator(func):
             @functools.wraps(func)
             def wrapper(*args, **kw):
@@ -79,6 +114,13 @@ class Component(WeChatBase):
         return decorator
 
     def component_mp_notify(self):
+        """
+        decorator for component authorized mp notify router.
+        decrypt message and encrypt the response of router function.
+
+        request.wechat_msg.get("component_mp_notify")
+        request.wechat_msg.get("component_client")
+        """
         def decorator(func):
             @functools.wraps(func)
             def wrapper(*args, **kw):

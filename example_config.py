@@ -14,5 +14,5 @@ WECHAT_AES_KEY = 'aeskey'
 # 17 - component
 WECHAT_TYPE = 17
 
-#
+# redis, memcached, leancloud.
 WECHAT_SESSION_TYPE = 'leancloud'

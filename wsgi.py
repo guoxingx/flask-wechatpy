@@ -10,7 +10,7 @@ import leancloud
 from app import app
 from cloud import engine
 
-import wydemo
+import demo
 
 
 APP_ID = os.environ['LEANCLOUD_APP_ID']
