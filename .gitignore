@@ -4,3 +4,8 @@ virt-wechatpydemo
 .python-version
 .bak-*
 .lean*
+cloud.py
+wsgi.py
+views
+templates
+*.swp
