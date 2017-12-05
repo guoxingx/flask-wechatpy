@@ -9,7 +9,7 @@ WECHAT_SECRET = 'secret'
 WECHAT_TOKEN = 'token'
 
 #
-WECHAT_AES_KEY = 'aeskey'
+WECHAT_AES_KEY = 'AnErrorWillRaiseWithIncorrectLengthOfAESKEY'
 
 # 17 - component
 WECHAT_TYPE = 17

@@ -17,12 +17,21 @@ class WeChatBase(object):
         self.init_with_config(config)
         self.bind_app(app)
 
+    def adjust_aes_key(self, aes_key):
+        lens = len(aes_key)
+        lenx = lens - (lens % 4 if lens % 4 else 4)
+        try:
+            import base64
+            return base64.decodestring(aes_key[:lenx])
+        except:
+            return aes_key
+
     def init_with_config(self, config):
         if not isinstance(config, dict):
             raise AttributeError()
 
         if config['WECHAT_SESSION_TYPE'] == 'redis':
-            from wechat.session.redisstorage import RedisStorage
+            from wechatpy.session.redisstorage import RedisStorage
             from redis import Redis
 
             if config.get('WECHAT_SESSION_REDIS_URL'):

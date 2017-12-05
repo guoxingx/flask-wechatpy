@@ -1,9 +1,9 @@
 # coding: utf-8
 
-from flask import request, redirect, url_for
+from flask import Flask, request, redirect, url_for
 from flask_wechatpy.component import Component
 
-from app import app
+app = Flask(__name__)
 
 app.config.from_object('wechat_config')
 
@@ -89,7 +89,7 @@ def mp_custom_index(appid):
     return redirect(url_for('mp_base_index'))
 
 
-@app.route('mp_base')
+@app.route('/mp_base')
 @wechat.component_user_login(redirect_endpoint='mpindex')
 def mp_base_index(appid='mp_base_appid'):
 

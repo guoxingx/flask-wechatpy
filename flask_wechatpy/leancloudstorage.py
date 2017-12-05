@@ -1,13 +1,11 @@
 
 from leancloud import Query, Object, LeanCloudError
+from wechatpy.session import SessionStorage
 
 
-class LeanCloudStorage(object):
+class LeanCloudStorage(SessionStorage):
 
     class_name = 'WeChatStorage'
-
-    def __init__(self):
-        pass
 
     def get(self, key, default=None):
         try:
@@ -26,12 +24,3 @@ class LeanCloudStorage(object):
 
     def delete(self, key):
         Query(self.class_name).equal_to('key', key).first().destroy()
-
-    def __getitem__(self, key):
-        self.get(key)
-
-    def __setitem__(self, key, value):
-        self.set(key, value)
-
-    def __delitem__(self, key):
-        self.delete(key)
