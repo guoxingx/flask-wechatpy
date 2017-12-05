@@ -15,7 +15,7 @@ wechat component operations using wechatpy and flask.
 
 5. 准备一个公众号。
 
-6. 访问用 `@wechat.component_authcall('component_authcallback')` 装饰的路由进行公众号授权。这里是 `/component/call`
+6. 访问用 `@wechat.component_authcall(router_func_name)` 装饰的路由进行公众号授权。这里是 `/component/call`
 
 7. 绑定成功后，进入公众号输入文本 **index**。
 
