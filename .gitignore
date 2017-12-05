@@ -1,4 +1,5 @@
 *.pyc
-virt-wechatpydemo
-.bak-*
+virt-*
 *.swp
+.bak-*
+.python-version
