@@ -1,12 +1,23 @@
+# coding: utf-8
 
-from flask import request, redirect, url_for
+from flask import Flask, request, redirect, url_for
+from flask_wechatpy.component import Component
 
-from .. import component
-from . import wechat
+app = Flask(__name__)
+
+app.config.from_object('wechat_config')
+
+# wechat
+wechat = Component(app=app)
 
 
-@wechat.route('/component/call')
-@component.component_authcall('wechat.component_authcallback')
+# what's that...
+app.config['DEBUG'] = True
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+
+
+@app.route('/component/call')
+@wechat.component_authcall('component_authcallback')
 def component_authcall():
     """
     component authorization for wechat mp.
@@ -17,16 +28,16 @@ def component_authcall():
     '''.format(url, url)
 
 
-@wechat.route('/component/callback')
-@component.component_authcallback()
+@app.route('/component/callback')
+@wechat.component_authcallback()
 def component_authcallback():
     return '''
     <h4>Authorization Success.</h4>
     '''
 
 
-@wechat.route('/component/notify', methods=['GET', 'POST'])
-@component.component_notify()
+@app.route('/component/notify', methods=['GET', 'POST'])
+@wechat.component_notify()
 def compcallback():
     """
     receive component ticket and unauthorization message.
@@ -34,8 +45,8 @@ def compcallback():
     return 'success'
 
 
-@wechat.route('/mp/<appid>/notify', methods=['GET', 'POST'])
-@component.component_mp_notify()
+@app.route('/mp/<appid>/notify', methods=['GET', 'POST'])
+@wechat.component_mp_notify()
 def mpcallback(appid):
     """
     receive authorized mp notify.
@@ -46,18 +57,18 @@ def mpcallback(appid):
     client = request.wechat_msg.get('component_client')
 
     if content.lower() == 'index':
-        return component.news(
+        return wechat.news(
             title='Index Of Application.',
             description='click to visit our site.',
             image='http://ac-n8vegisj.clouddn.com/b09f095e305b85683878.JPG',
-            url=request.url_root[:-1] + url_for('wechat.mpindex', appid=client.appid)
+            url=request.url_root[:-1] + url_for('mpindex', appid=client.appid)
         )
 
-    return component.text("'{}'. --powered by flask-wechat.".format(content))
+    return wechat.text('I got your "{}". --powered by flask-wechat.'.format(content))
 
 
-@wechat.route('/mp/<appid>/index')
-@component.component_user_login(redirect_endpoint='wechat.mpindex')
+@app.route('/mp/<appid>/index')
+@wechat.component_user_login(redirect_endpoint='mpindex')
 def mpindex(appid):
     """
     application index of wechat mp.
@@ -67,8 +78,8 @@ def mpindex(appid):
     '''.format(request.wechat_msg.get('openid'))
 
 
-@wechat.route('/mp_custom/<appid>/index')
-@component.component_user_login(redirect_endpoint='mp_custom_index')
+@app.route('/mp_custom/<appid>/index')
+@wechat.component_user_login(redirect_endpoint='mpindex')
 def mp_custom_index(appid):
 
     # 保存用户在客户公众号的信息
@@ -78,8 +89,8 @@ def mp_custom_index(appid):
     return redirect(url_for('mp_base_index'))
 
 
-@wechat.route('/mp_base')
-@component.component_user_login(redirect_endpoint='mpindex')
+@app.route('/mp_base')
+@wechat.component_user_login(redirect_endpoint='mpindex')
 def mp_base_index(appid='mp_base_appid'):
 
     # 保存用户在mp_base的信息，并与客户公众号的信息进行关联。
@@ -97,3 +108,7 @@ def save_user_info(**kw):
 
 def save_and_relate_user_info():
     pass
+
+
+if __name__ == '__main__':
+    app.run()
