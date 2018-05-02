@@ -1,4 +1,4 @@
-#coding: utf-8
+#!coding: utf-8
 
 from __future__ import absolute_import, unicode_literals
 
@@ -15,7 +15,7 @@ class ComponentOAuth(object):
     API_BASE_URL = 'https://api.weixin.qq.com/'
     OAUTH_BASE_URL = 'https://open.weixin.qq.com/connect/'
 
-    def __init__(self, app_id, component_appid, redirect_uri,
+    def __init__(self, app_id, component_appid, component_access_token, redirect_uri,
                  scope='snsapi_base', state=''):
         """
 
@@ -26,6 +26,7 @@ class ComponentOAuth(object):
         """
         self.app_id = app_id
         self.component_appid = component_appid
+        self.component_access_token = component_access_token
         self.redirect_uri = redirect_uri
         self.scope = scope
         self.state = state
@@ -104,7 +105,8 @@ class ComponentOAuth(object):
         url_list.append('#wechat_redirect')
         return ''.join(url_list)
 
-    def fetch_access_token(self, code):
+    # def fetch_access_token(self, code):
+    def get_openid(self, code):
         """获取 access_token
 
         :param code: 授权完成跳转回来后 URL 中的 code 参数
@@ -116,6 +118,7 @@ class ComponentOAuth(object):
                 'appid': self.app_id,
                 'code': code,
                 'component_appid': self.component_appid,
+                'component_access_token': self.component_access_token,
                 'grant_type': 'authorization_code'
             }
         )

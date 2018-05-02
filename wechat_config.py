@@ -14,5 +14,5 @@ WECHAT_AES_KEY = 'AnErrorWillRaiseWithIncorrectLengthOfAESKEY'
 # 17 - component
 WECHAT_TYPE = 17
 
-# redis, memcached, leancloud.
-WECHAT_SESSION_TYPE = 'leancloud'
+# redis, memcached.
+WECHAT_SESSION_TYPE = 'redis'
