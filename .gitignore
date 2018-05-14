@@ -3,3 +3,4 @@ virt-*
 *.swp
 .bak-*
 .python-version
+venv

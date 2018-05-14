@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from flask import Flask, request, redirect, url_for
+from flask import Flask, request, url_for
 from flask_wechatpy.component import Component
 
 app = Flask(__name__)
@@ -68,7 +68,7 @@ def mpcallback(appid):
 
 
 @app.route('/mp/<appid>/index')
-@wechat.component_user_login(redirect_endpoint='mpindex')
+@wechat.get_user()
 def mpindex(appid):
     """
     application index of wechat mp.
@@ -78,37 +78,5 @@ def mpindex(appid):
     '''.format(request.wechat_msg.get('openid'))
 
 
-@app.route('/mp_custom/<appid>/index')
-@wechat.component_user_login(redirect_endpoint='mpindex')
-def mp_custom_index(appid):
-
-    # 保存用户在客户公众号的信息
-    save_user_info()
-
-    # 进行第二次跳转
-    return redirect(url_for('mp_base_index'))
-
-
-@app.route('/mp_base')
-@wechat.component_user_login(redirect_endpoint='mpindex')
-def mp_base_index(appid='mp_base_appid'):
-
-    # 保存用户在mp_base的信息，并与客户公众号的信息进行关联。
-    save_and_relate_user_info()
-
-    # 返回页面
-    return '''
-    <h4>I see you.</h4>
-    '''
-
-
-def save_user_info(**kw):
-    pass
-
-
-def save_and_relate_user_info():
-    pass
-
-
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
